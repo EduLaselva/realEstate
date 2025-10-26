@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <!-- Header com logo e navegação -->
@@ -202,6 +202,28 @@
             </div>
         </div>
     </footer>
+
+    <!-- Modal para visualizar imóvel -->
+    <div class="modal" id="property-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Detalhes do Imóvel</h3>
+                <button class="close-modal" onclick="closeModal('property-modal')">&times;</button>
+            </div>
+            <div id="property-modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Modal para mensagens -->
+    <div class="modal" id="message-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Mensagem</h3>
+                <button class="close-modal" onclick="closeModal('message-modal')">&times;</button>
+            </div>
+            <div id="message-modal-body"></div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>

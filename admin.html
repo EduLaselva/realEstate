@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Real State</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"></div>
+                <div class="logo-text">Real State</div>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#alugar">Imóveis</a></li>
+                    <li id="user-nav">
+                        <div class="user-info">
+                            <span class="user-name" id="user-display-name"></span>
+                            <button class="btn btn-outline" id="logout-btn">Sair</button>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Dashboard Principal -->
+    <div class="dashboard">
+        <div class="container">
+            <!-- Cabeçalho do Dashboard -->
+            <div class="dashboard-header">
+                <h1>Painel Administrativo</h1>
+                <p>Gerencie imóveis, usuários, mensagens e contratos</p>
+                
+                <div class="dashboard-nav">
+                    <button class="btn" onclick="showSection('stats')">Estatísticas</button>
+                    <button class="btn" onclick="showSection('imoveis')">Gerenciar Imóveis</button>
+                    <button class="btn" onclick="showSection('mensagens')">Mensagens</button>
+                    <button class="btn" onclick="showSection('contratos')">Contratos</button>
+                    <button class="btn" onclick="showSection('notificacoes')">Notificações</button>
+                </div>
+            </div>
+
+            <!-- Seção de Estatísticas -->
+            <div class="dashboard-content" id="stats-section">
+                <h2 class="section-title">Estatísticas do Sistema</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-imoveis">0</div>
+                        <div class="stat-label">Imóveis Cadastrados</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-clientes">0</div>
+                        <div class="stat-label">Clientes Registrados</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-mensagens">0</div>
+                        <div class="stat-label">Mensagens Recebidas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-contratos">0</div>
+                        <div class="stat-label">Contratos Ativos</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Gerenciar Imóveis -->
+            <div class="dashboard-content" id="imoveis-section" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h2 class="section-title">Gerenciar Imóveis</h2>
+                    <button class="btn btn-success" onclick="openCadastrarImovel()">+ Cadastrar Novo Imóvel</button>
+                </div>
+                
+                <div class="search-bar">
+                    <input type="text" id="search-imoveis" placeholder="Buscar imóveis..." onkeyup="searchImoveis()">
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Endereço</th>
+                                <th>Preço</th>
+                                <th>Classificação</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="properties-table-body">
+                            <tr>
+                                <td colspan="5">Carregando...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Seção de Mensagens -->
+            <div class="dashboard-content" id="mensagens-section" style="display: none;">
+                <h2 class="section-title">Mensagens dos Clientes</h2>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Remetente</th>
+                                <th>Assunto</th>
+                                <th>Data</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messages-table-body">
+                            <tr>
+                                <td colspan="4">Carregando...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Seção de Contratos -->
+            <div class="dashboard-content" id="contratos-section" style="display: none;">
+                <h2 class="section-title">Contratos de Locação</h2>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Número</th>
+                                <th>Cliente</th>
+                                <th>Imóvel</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contracts-table-body">
+                            <tr>
+                                <td colspan="5">Nenhum contrato cadastrado</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Seção de Notificações -->
+            <div class="dashboard-content" id="notificacoes-section" style="display: none;">
+                <h2 class="section-title">Notificações</h2>
+                <div id="notifications-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Cadastro/Edição de Imóvel -->
+    <div class="modal" id="cadastrar-imovel-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Cadastrar/Editar Imóvel</h3>
+                <button class="close-modal" onclick="closeModal('cadastrar-imovel-modal')">&times;</button>
+            </div>
+            
+            <form id="imovel-form" onsubmit="saveProperty(event)">
+                <input type="hidden" id="imovel-id">
+                
+                <div class="form-group">
+                    <label for="imovel-endereco">Endereço Completo*</label>
+                    <input type="text" id="imovel-endereco" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="imovel-preco">Preço Mensal (R$)*</label>
+                    <input type="number" id="imovel-preco" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="imovel-quartos">Número de Quartos*</label>
+                    <input type="number" id="imovel-quartos" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="imovel-banheiros">Número de Banheiros*</label>
+                    <input type="number" id="imovel-banheiros" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="imovel-area">Área (m²)*</label>
+                    <input type="number" id="imovel-area" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="imovel-tipo">Tipo de Imóvel*</label>
+                    <select id="imovel-tipo" required>
+                        <option value="apartamento">Apartamento</option>
+                        <option value="casa">Casa</option>
+                        <option value="kitnet">Kitnet</option>
+                        <option value="comercial">Comercial</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="imovel-classificacao">Classificação</label>
+                    <select id="imovel-classificacao">
+                        <option value="">Sem classificação</option>
+                        <option value="Destaque">Destaque</option>
+                        <option value="Luxo">Luxo</option>
+                        <option value="Novo">Novo</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="imovel-descricao">Descrição*</label>
+                    <textarea id="imovel-descricao" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="imovel-imagem">URL da Imagem</label>
+                    <input type="url" id="imovel-imagem" placeholder="https://...">
+                </div>
+                
+                <button type="submit" class="btn" style="width: 100%;">Salvar Imóvel</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para visualizar mensagem -->
+    <div class="modal" id="message-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Mensagem</h3>
+                <button class="close-modal" onclick="closeModal('message-modal')">&times;</button>
+            </div>
+            <div id="message-modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Modal para visualizar contrato -->
+    <div class="modal" id="contract-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Contrato de Locação</h3>
+                <button class="close-modal" onclick="closeModal('contract-modal')">&times;</button>
+            </div>
+            <div id="contract-modal-body"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Funções específicas do admin
+        function showSection(sectionName) {
+            // Ocultar todas as seções
+            document.querySelectorAll('.dashboard-content').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Mostrar seção selecionada
+            document.getElementById(`${sectionName}-section`).style.display = 'block';
+            
+            // Carregar dados da seção
+            if (sectionName === 'mensagens') {
+                loadMessagesTable();
+            } else if (sectionName === 'imoveis') {
+                loadPropertiesTable();
+            } else if (sectionName === 'contratos') {
+                loadContractsTable();
+            } else if (sectionName === 'notificacoes') {
+                loadNotifications();
+            }
+        }
+        
+        function openCadastrarImovel() {
+            document.getElementById('imovel-form').reset();
+            document.getElementById('imovel-id').value = '';
+            openModal('cadastrar-imovel-modal');
+        }
+        
+        function searchImoveis() {
+            const searchTerm = document.getElementById('search-imoveis').value.toLowerCase();
+            const rows = document.querySelectorAll('#properties-table-body tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+        
+        function loadContractsTable() {
+            const tbody = document.getElementById('contracts-table-body');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            if (contractsDB.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5">Nenhum contrato cadastrado</td></tr>';
+                return;
+            }
+            
+            contractsDB.forEach(contract => {
+                const cliente = usersDB.find(u => u.id === contract.clienteId);
+                const imovel = propertiesDB.find(p => p.id === contract.imovelId);
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${contract.numeroContrato}</td>
+                    <td>${cliente ? cliente.nome : 'N/A'}</td>
+                    <td>${imovel ? imovel.endereco : 'N/A'}</td>
+                    <td>${contract.status}</td>
+                    <td>
+                        <button class="btn btn-small" onclick="viewContract(${contract.id})">Ver</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        function viewContract(contractId) {
+            const contract = contractsDB.find(c => c.id === contractId);
+            if (!contract) return;
+            
+            const property = propertiesDB.find(p => p.id === contract.imovelId);
+            const cliente = usersDB.find(u => u.id === contract.clienteId);
+            
+            const modalBody = document.getElementById('contract-modal-body');
+            modalBody.innerHTML = `
+                <div class="contract-preview">
+                    <div class="contract-section">
+                        <h4>CONTRATO DE LOCAÇÃO</h4>
+                        <p><strong>Número:</strong> ${contract.numeroContrato}</p>
+                        <p><strong>Status:</strong> ${contract.status}</p>
+                    </div>
+                    
+                    <div class="contract-section">
+                        <h4>LOCADOR</h4>
+                        <p><strong>Real State Imobiliária</strong></p>
+                        <p>CNPJ: 12.345.678/0001-90</p>
+                    </div>
+                    
+                    <div class="contract-section">
+                        <h4>LOCATÁRIO</h4>
+                        <p><strong>Nome:</strong> ${cliente?.nome || 'N/A'}</p>
+                        <p><strong>Email:</strong> ${cliente?.email || 'N/A'}</p>
+                    </div>
+                    
+                    <div class="contract-section">
+                        <h4>IMÓVEL</h4>
+                        <p><strong>Endereço:</strong> ${property?.endereco || 'N/A'}</p>
+                        <p><strong>Valor:</strong> R$ ${contract.valor.toLocaleString('pt-BR')}/mês</p>
+                    </div>
+                </div>
+                
+                ${contract.status === 'Pendente Assinatura' ? 
+                    `<button class="btn btn-success" onclick="gerarContrato(${contract.id})">Enviar para Assinatura</button>` : 
+                    `<button class="btn" onclick="downloadContract(${contract.id})">Baixar PDF</button>`
+                }
+            `;
+            
+            openModal('contract-modal');
+        }
+        
+        function gerarContrato(contractId) {
+            alert('Contrato enviado para assinatura digital! O cliente receberá um e-mail com o link.');
+            closeModal('contract-modal');
+        }
+        
+        function downloadContract(contractId) {
+            alert('Em um sistema real, seria gerado um PDF do contrato para download.');
+        }
+    </script>
+</body>
+</html>
