@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Real State</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .chat-container {
+            max-width: 1200px;
+            margin: 6rem auto 2rem;
+            padding: 0 2rem;
+        }
+        
+        .chat-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .chat-header h1 {
+            font-family: 'Playfair Display', serif;
+            color: #0d1b2a;
+            margin-bottom: 0.5rem;
+        }
+        
+        .chat-info {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        .chat-body {
+            background: #f8f9fa;
+            padding: 2rem;
+            min-height: 400px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .message {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .message.sent {
+            justify-content: flex-end;
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 1rem;
+            border-radius: 12px;
+            position: relative;
+        }
+        
+        .message.received .message-content {
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .message.sent .message-content {
+            background: #c8a97e;
+            color: white;
+        }
+        
+        .message-sender {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+        
+        .message.sent .message-sender {
+            color: #fff;
+        }
+        
+        .message-text {
+            margin-bottom: 0.3rem;
+        }
+        
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+        
+        .chat-footer {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .chat-input-container {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: #c8a97e;
+        }
+        
+        .btn-send {
+            padding: 0.8rem 2rem;
+            background-color: #c8a97e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-send:hover {
+            background-color: #b8996e;
+        }
+        
+        .btn-back {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: #c8a97e;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .btn-back:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"></div>
+                <div class="logo-text">Real State</div>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#alugar">Imóveis</a></li>
+                    <li id="user-nav">
+                        <div class="user-info">
+                            <span class="user-name" id="user-display-name"></span>
+                            <button class="btn btn-outline" onclick="handleLogout()">Sair</button>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="chat-container">
+        <a href="index.html" class="btn-back">← Voltar aos imóveis</a>
+        
+        <div class="chat-header">
+            <h1>Chat com o Proprietário</h1>
+            <div class="chat-info" id="chat-info">Carregando informações...</div>
+        </div>
+        
+        <div class="chat-body" id="chat-messages">
+            <div style="text-align: center; color: #666; padding: 2rem;">
+                Nenhuma mensagem ainda. Envie uma mensagem para iniciar a conversa.
+            </div>
+        </div>
+        
+        <div class="chat-footer">
+            <form class="chat-input-container" id="message-form">
+                <input type="text" class="chat-input" id="message-input" 
+                       placeholder="Digite sua mensagem..." required>
+                <button type="submit" class="btn-send">Enviar</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = 'http://localhost/projetoRealEstate/api';
+        let currentUser = null;
+        let currentImovelId = null;
+        let locadorId = 1; // ID fixo do proprietário (locador)
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            currentUser = JSON.parse(localStorage.getItem('user'));
+            currentImovelId = localStorage.getItem('chatImovelId');
+            
+            if (!currentUser) {
+                alert('Você precisa estar logado para acessar o chat.');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            if (!currentImovelId) {
+                alert('Nenhum imóvel selecionado.');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            document.getElementById('user-display-name').textContent = currentUser.nome;
+            
+            loadChatInfo();
+            loadMessages();
+            
+            // Atualizar mensagens a cada 3 segundos
+            setInterval(loadMessages, 3000);
+            
+            document.getElementById('message-form').addEventListener('submit', sendMessage);
+        });
+        
+        function loadChatInfo() {
+            // Buscar informações do imóvel (simulado)
+            const imoveis = [
+                { id: 1, endereco: 'Rua das Flores, 123 - Jardim Paulista, São Paulo' },
+                { id: 2, endereco: 'Av. Paulista, 1500 - Bela Vista, São Paulo' },
+                { id: 3, endereco: 'Rua Augusta, 789 - Consolação, São Paulo' },
+                { id: 4, endereco: 'Rua Vergueiro, 456 - Vila Mariana, São Paulo' },
+                { id: 5, endereco: 'Rua Haddock Lobo, 250 - Cerqueira César, São Paulo' },
+                { id: 6, endereco: 'Rua dos Pinheiros, 890 - Pinheiros, São Paulo' },
+                { id: 7, endereco: 'Av. Faria Lima, 3000 - Itaim Bibi, São Paulo' },
+                { id: 8, endereco: 'Rua Oscar Freire, 567 - Jardins, São Paulo' },
+                { id: 9, endereco: 'Rua Bela Cintra, 1234 - Consolação, São Paulo' },
+                { id: 10, endereco: 'Av. Europa, 500 - Jardim Europa, São Paulo' }
+            ];
+            
+            const imovel = imoveis.find(i => i.id == currentImovelId);
+            if (imovel) {
+                document.getElementById('chat-info').textContent = 
+                    `Conversa sobre: ${imovel.endereco}`;
+            }
+        }
+        
+        async function loadMessages() {
+            try {
+                const response = await fetch(`${API_URL}/mensagens.php?user_id=${currentUser.id}`);
+                
+                if (response.ok) {
+                    const messages = await response.json();
+                    displayMessages(messages);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar mensagens:', error);
+            }
+        }
+        
+        function displayMessages(messages) {
+            const container = document.getElementById('chat-messages');
+            
+            if (messages.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: #666; padding: 2rem;">
+                        Nenhuma mensagem ainda. Envie uma mensagem para iniciar a conversa.
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            messages.forEach(msg => {
+                const isSent = msg.id_remetente == currentUser.id;
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
+                
+                const date = new Date(msg.dataEnvio);
+                const timeStr = date.toLocaleString('pt-BR');
+                
+                messageDiv.innerHTML = `
+                    <div class="message-content">
+                        <div class="message-sender">${isSent ? 'Você' : msg.nome_remetente}</div>
+                        <div class="message-text">${msg.conteudo}</div>
+                        <div class="message-time">${timeStr}</div>
+                    </div>
+                `;
+                
+                container.appendChild(messageDiv);
+            });
+            
+            // Scroll para o final
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        async function sendMessage(e) {
+            e.preventDefault();
+            
+            const input = document.getElementById('message-input');
+            const conteudo = input.value.trim();
+            
+            if (!conteudo) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/mensagens.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        conteudo: conteudo,
+                        id_remetente: currentUser.id,
+                        id_destinatario: locadorId
+                    })
+                });
+                
+                if (response.ok) {
+                    input.value = '';
+                    loadMessages();
+                } else {
+                    alert('Erro ao enviar mensagem');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao enviar mensagem');
+            }
+        }
+        
+        function handleLogout() {
+            localStorage.removeItem('user');
+            localStorage.removeItem('chatImovelId');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

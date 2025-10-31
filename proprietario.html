@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Proprietário - Real State</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .dashboard {
+            padding: 6rem 0 2rem;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+        
+        .dashboard-header {
+            background: white;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .dashboard-header h1 {
+            font-family: 'Playfair Display', serif;
+            color: #0d1b2a;
+            margin-bottom: 0.5rem;
+        }
+        
+        .dashboard-nav {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .dashboard-nav .btn {
+            padding: 0.8rem 1.5rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #c8a97e;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        .dashboard-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1.5rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        table th {
+            background: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #0d1b2a;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .status-disponivel {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-alugado {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            margin: 0 0.2rem;
+        }
+        
+        .btn-success {
+            background-color: #28a745;
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"></div>
+                <div class="logo-text">Real State</div>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li id="user-nav">
+                        <div class="user-info">
+                            <span class="user-name" id="user-display-name"></span>
+                            <button class="btn btn-outline" onclick="handleLogout()">Sair</button>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Dashboard -->
+    <div class="dashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1>Painel do Proprietário</h1>
+                <p>Gerencie seus imóveis e mensagens</p>
+                
+                <div class="dashboard-nav">
+                    <button class="btn" onclick="showSection('stats')">Estatísticas</button>
+                    <button class="btn" onclick="showSection('imoveis')">Gerenciar Imóveis</button>
+                    <button class="btn" onclick="showSection('mensagens')">Mensagens dos Clientes</button>
+                </div>
+            </div>
+
+            <!-- Estatísticas -->
+            <div id="stats-section" class="dashboard-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-imoveis">10</div>
+                        <div class="stat-label">Total de Imóveis</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="imoveis-disponiveis">8</div>
+                        <div class="stat-label">Imóveis Disponíveis</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="imoveis-alugados">2</div>
+                        <div class="stat-label">Imóveis Alugados</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-mensagens">0</div>
+                        <div class="stat-label">Mensagens Recebidas</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gerenciar Imóveis -->
+            <div id="imoveis-section" class="dashboard-content" style="display: none;">
+                <h2 class="section-title">Gerenciar Imóveis</h2>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Endereço</th>
+                                <th>Preço</th>
+                                <th>Detalhes</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="imoveis-table-body">
+                            <!-- Será preenchido via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Mensagens -->
+            <div id="mensagens-section" class="dashboard-content" style="display: none;">
+                <h2 class="section-title">Mensagens dos Clientes</h2>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Remetente</th>
+                                <th>Mensagem</th>
+                                <th>Data</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mensagens-table-body">
+                            <tr>
+                                <td colspan="4" style="text-align: center;">Nenhuma mensagem recebida</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = 'http://localhost/projetoRealEstate/api';
+        let currentUser = null;
+        
+        const imoveis = [
+            { id: 1, endereco: 'Rua das Flores, 123 - Jardim Paulista, São Paulo', preco: 2500, quartos: 2, banheiros: 1, area: 65, status: 'disponivel' },
+            { id: 2, endereco: 'Av. Paulista, 1500 - Bela Vista, São Paulo', preco: 3800, quartos: 3, banheiros: 2, area: 85, status: 'disponivel' },
+            { id: 3, endereco: 'Rua Augusta, 789 - Consolação, São Paulo', preco: 5200, quartos: 3, banheiros: 2, area: 95, status: 'alugado' },
+            { id: 4, endereco: 'Rua Vergueiro, 456 - Vila Mariana, São Paulo', preco: 1800, quartos: 1, banheiros: 1, area: 45, status: 'disponivel' },
+            { id: 5, endereco: 'Rua Haddock Lobo, 250 - Cerqueira César, São Paulo', preco: 7500, quartos: 4, banheiros: 3, area: 150, status: 'disponivel' },
+            { id: 6, endereco: 'Rua dos Pinheiros, 890 - Pinheiros, São Paulo', preco: 4200, quartos: 2, banheiros: 2, area: 78, status: 'disponivel' },
+            { id: 7, endereco: 'Av. Faria Lima, 3000 - Itaim Bibi, São Paulo', preco: 9800, quartos: 4, banheiros: 4, area: 180, status: 'disponivel' },
+            { id: 8, endereco: 'Rua Oscar Freire, 567 - Jardins, São Paulo', preco: 3200, quartos: 2, banheiros: 1, area: 70, status: 'alugado' },
+            { id: 9, endereco: 'Rua Bela Cintra, 1234 - Consolação, São Paulo', preco: 6500, quartos: 3, banheiros: 3, area: 120, status: 'disponivel' },
+            { id: 10, endereco: 'Av. Europa, 500 - Jardim Europa, São Paulo', preco: 12000, quartos: 5, banheiros: 4, area: 220, status: 'disponivel' }
+        ];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            currentUser = JSON.parse(localStorage.getItem('user'));
+            
+            if (!currentUser || currentUser.tipo !== 'locador') {
+                alert('Acesso negado! Esta área é exclusiva para proprietários.');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            document.getElementById('user-display-name').textContent = currentUser.nome;
+            
+            loadImoveis();
+            loadMensagens();
+            updateStats();
+        });
+        
+        function showSection(section) {
+            document.querySelectorAll('.dashboard-section, .dashboard-content').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            if (section === 'stats') {
+                document.getElementById('stats-section').style.display = 'block';
+            } else {
+                document.getElementById(`${section}-section`).style.display = 'block';
+            }
+        }
+        
+        function loadImoveis() {
+            const tbody = document.getElementById('imoveis-table-body');
+            tbody.innerHTML = '';
+            
+            imoveis.forEach(imovel => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${imovel.id}</td>
+                    <td>${imovel.endereco}</td>
+                    <td>R$ ${imovel.preco.toLocaleString('pt-BR')}</td>
+                    <td>${imovel.quartos}Q, ${imovel.banheiros}B, ${imovel.area}m²</td>
+                    <td>
+                        <span class="status-badge status-${imovel.status}">
+                            ${imovel.status === 'disponivel' ? 'Disponível' : 'Alugado'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-small btn-${imovel.status === 'disponivel' ? 'danger' : 'success'}" 
+                                onclick="toggleStatus(${imovel.id})">
+                            ${imovel.status === 'disponivel' ? 'Marcar como Alugado' : 'Marcar como Disponível'}
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        async function loadMensagens() {
+            try {
+                const response = await fetch(`${API_URL}/mensagens.php?user_id=${currentUser.id}`);
+                
+                if (response.ok) {
+                    const mensagens = await response.json();
+                    displayMensagens(mensagens);
+                    document.getElementById('total-mensagens').textContent = mensagens.length;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar mensagens:', error);
+            }
+        }
+        
+        function displayMensagens(mensagens) {
+            const tbody = document.getElementById('mensagens-table-body');
+            
+            if (mensagens.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Nenhuma mensagem recebida</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            
+            mensagens.forEach(msg => {
+                const tr = document.createElement('tr');
+                const date = new Date(msg.dataEnvio);
+                
+                tr.innerHTML = `
+                    <td><strong>${msg.nome_remetente}</strong></td>
+                    <td>${msg.conteudo}</td>
+                    <td>${date.toLocaleString('pt-BR')}</td>
+                    <td>
+                        <button class="btn btn-small" onclick="responderMensagem(${msg.id_remetente}, '${msg.nome_remetente}')">
+                            Responder
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        function toggleStatus(imovelId) {
+            const imovel = imoveis.find(i => i.id === imovelId);
+            if (!imovel) return;
+            
+            const novoStatus = imovel.status === 'disponivel' ? 'alugado' : 'disponivel';
+            
+            if (confirm(`Alterar status do imóvel para "${novoStatus === 'disponivel' ? 'Disponível' : 'Alugado'}"?`)) {
+                imovel.status = novoStatus;
+                loadImoveis();
+                updateStats();
+                
+                // Aqui você faria a chamada para a API para atualizar no banco
+                // updateStatusAPI(imovelId, novoStatus);
+            }
+        }
+        
+        function updateStats() {
+            const disponiveis = imoveis.filter(i => i.status === 'disponivel').length;
+            const alugados = imoveis.filter(i => i.status === 'alugado').length;
+            
+            document.getElementById('total-imoveis').textContent = imoveis.length;
+            document.getElementById('imoveis-disponiveis').textContent = disponiveis;
+            document.getElementById('imoveis-alugados').textContent = alugados;
+        }
+        
+        async function responderMensagem(destinatarioId, nomeDestinatario) {
+            const resposta = prompt(`Responder para ${nomeDestinatario}:`);
+            
+            if (!resposta) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/mensagens.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        conteudo: resposta,
+                        id_remetente: currentUser.id,
+                        id_destinatario: destinatarioId
+                    })
+                });
+                
+                if (response.ok) {
+                    alert('Resposta enviada com sucesso!');
+                } else {
+                    alert('Erro ao enviar resposta');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao enviar resposta');
+            }
+        }
+        
+        function handleLogout() {
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

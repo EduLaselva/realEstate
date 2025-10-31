@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real State - Imobiliária de Luxo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header com logo e navegação -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <div class="logo-text">Real State</div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#alugar">Alugar</a></li>
+                    <li><a href="#sobre">Sobre</a></li>
+                    <li id="user-nav" style="display: none;">
+                        <div class="user-info">
+                            <span class="user-name" id="user-display-name"></span>
+                            <button class="btn btn-outline" id="logout-btn">Sair</button>
+                        </div>
+                    </li>
+                    <li id="login-nav">
+                        <a href="login.html" id="login-link">Login</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Encontre o imóvel dos seus sonhos</h1>
+            <p>Oferecemos as melhores opções de imóveis para aluguel nos melhores bairros da cidade</p>
+            <a href="#alugar" class="btn">Explorar Imóveis</a>
+        </div>
+    </section>
+
+    <!-- Sobre -->
+    <section class="about" id="sobre">
+        <div class="container about-container">
+            <div class="about-text">
+                <h2 class="section-title">Sobre a Real State</h2>
+                <p>Com mais de 15 anos de experiência no mercado imobiliário, a Real State se consolidou como referência em negócios de alto padrão. Nossa missão é conectar pessoas aos seus lares dos sonhos, oferecendo um serviço personalizado e de excelência.</p>
+                <p>Nossa equipe de corretores especializados está pronta para atendê-lo com profissionalismo e dedicação, garantindo a melhor experiência na locação do seu imóvel.</p>
+                <p>Valorizamos a confiança depositada em nosso trabalho e buscamos sempre superar as expectativas de nossos clientes, com transparência e compromisso em todas as negociações.</p>
+            </div>
+            <div class="about-image"></div>
+        </div>
+    </section>
+
+    <!-- Propriedades -->
+    <section class="properties" id="alugar">
+        <div class="container">
+            <h2 class="section-title">Imóveis para Alugar</h2>
+            
+            <div class="property-grid" id="properties-container">
+                <!-- Imóveis serão carregados dinamicamente via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Modal de Solicitação de Aluguel -->
+    <div class="modal" id="aluguel-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Solicitar Aluguel</h3>
+                <button class="close-modal" onclick="closeModal('aluguel-modal')">&times;</button>
+            </div>
+            <p id="modal-message">Para solicitar o aluguel de um imóvel, é necessário fazer login ou criar uma conta.</p>
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                <button class="btn" onclick="redirectToLogin()">Fazer Login</button>
+                <button class="btn btn-outline" onclick="closeModal('aluguel-modal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="contato">
+        <div class="container footer-container">
+            <div class="footer-section">
+                <h3>Real State</h3>
+                <p>Oferecemos as melhores soluções imobiliárias para você encontrar o lugar perfeito para morar ou investir.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Contato</h3>
+                <p>Av. Brigadeiro Faria Lima, 1500</p>
+                <p>São Paulo - SP</p>
+                <p>Tel: (11) 3456-7890</p>
+                <p>Email: contato@realstate.com.br</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Links Rápidos</h3>
+                <a href="#home">Home</a>
+                <a href="#alugar">Alugar</a>
+                <a href="#sobre">Sobre</a>
+                <a href="login.html">Login</a>
+            </div>
+        </div>
+        
+        <div class="container">
+            <div class="copyright">
+                &copy; 2025 Real State - Todos os direitos reservados
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal para visualizar imóvel -->
+    <div class="modal" id="property-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Detalhes do Imóvel</h3>
+                <button class="close-modal" onclick="closeModal('property-modal')">&times;</button>
+            </div>
+            <div id="property-modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Modal para mensagens -->
+    <div class="modal" id="message-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Mensagem</h3>
+                <button class="close-modal" onclick="closeModal('message-modal')">&times;</button>
+            </div>
+            <div id="message-modal-body"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
